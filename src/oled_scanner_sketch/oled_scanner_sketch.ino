@@ -21,6 +21,7 @@ This file is part of OLED 5.8ghz Scanner project.
 #include <Wire.h>
 #include <EEPROM.h>
 #include "U8glib.h"
+#include "PinChangeInterrupt.h"
 #include "rx5808.h"
 #include "const.h"
 
@@ -94,10 +95,8 @@ void irq_mode_handle() {
 
 void setup() {
   //button init
-  pinMode(button_select, INPUT);
-  digitalWrite(button_select, HIGH);
-  pinMode(button_mode, INPUT);
-  digitalWrite(button_mode, HIGH);
+  pinMode(button_select, INPUT_PULLUP);
+  pinMode(button_mode, INPUT_PULLUP);
 
   //display init
   // assign default color value
@@ -134,8 +133,8 @@ void setup() {
   changing_mode = 0;
 
   //rock&roll
-  attachInterrupt(digitalPinToInterrupt(button_select), irq_select_handle, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(button_mode), irq_mode_handle, CHANGE);
+  attachPCINT(digitalPinToPCINT(button_select), irq_select_handle, CHANGE);
+  attachPCINT(digitalPinToPCINT(button_mode), irq_mode_handle, CHANGE);
 }
 
 void loop(void) {
