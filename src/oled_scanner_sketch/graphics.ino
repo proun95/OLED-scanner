@@ -23,7 +23,7 @@ This file is part of OLED 5.8ghz Scanner project.
 char buf[80];
 
 void wait_draw() {
-  u8g.drawStr(FRAME_START_X, FRAME_START_Y, "please wait... ");
+  u8g.drawStr(30, 38, "Loading... ");
 }
 
 void receiver_draw( uint32_t channel) {
@@ -49,7 +49,6 @@ void receiver_draw( uint32_t channel) {
     uint16_t rssi_scaled = map(rx5808.getRssi(channelIndex), 1, BIN_H, 1, BIN_H / 2);
     u8g.drawVLine(5 + 3 * i, 65 - rssi_scaled, rssi_scaled); //for bar plot, half size because of the small space
   }
-
 }
 
 //draw all the channels of a certain band
@@ -188,8 +187,8 @@ void splashScr() {
   u8g.firstPage();
   do {
 
-    u8g.drawStr(5, 10, "oled 5.8ghz scanner");
-    u8g.drawStr(10, 35, "by mikym0use");
+    u8g.drawStr(8, 30, "oled 5.8ghz scanner");
+    u8g.drawStr(40, 45, "by Proun");
 
   }
   while ( u8g.nextPage() );

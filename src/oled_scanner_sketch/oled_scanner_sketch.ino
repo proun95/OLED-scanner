@@ -82,7 +82,6 @@ void irq_mode_handle() {
   if (digitalRead(button_mode) == LOW) {
     rx5808.abortScan();
     changing_mode = 1;
-
     if (curr_status == RECEIVER_MODE) {
       curr_status = SCANNER_MODE;
     } else {
@@ -146,13 +145,13 @@ void loop(void) {
 
   u8g.firstPage();
   do {
-    if (changing_mode) { //if changing mode "please wait..."
+    if (changing_mode) { //if changing mode "Loading..."
       wait_draw();
     } else {
       if (curr_status == RECEIVER_MODE) {
         receiver_draw(curr_channel);
       }
-      if (curr_status == SCANNER_MODE) {
+      else if (curr_status == SCANNER_MODE) {
         scanner_draw(curr_screen);
       }
     }
