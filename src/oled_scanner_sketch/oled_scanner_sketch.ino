@@ -58,17 +58,23 @@ void irq_select_handle() {
   if (millis() - last_irq < 500) //debounce
     return;
 
-  if (curr_status == SCANNER_MODE && digitalRead(button_select) == LOW) { //simply switch to the next screen
-    curr_screen = (curr_screen + 1) % 7;
-  }
-
-  if (curr_status == RECEIVER_MODE) {
-    if (digitalRead(button_select) == HIGH && millis() - last_irq > 800) //long press to reach the next strong cannel
+  if (digitalRead(button_select) == HIGH && millis() - last_irq > 800) {
+    if (curr_status == SCANNER_MODE) {
+        curr_screen = 6;
+    }
+    else if (curr_status == RECEIVER_MODE) {
       curr_channel = rx5808.getNext(curr_channel);
-    else
-      curr_channel = (curr_channel + 1) % CHANNEL_MAX;
-
-    changing_freq = 1;
+      changing_freq = 1;
+    }
+  }
+  else if (digitalRead(button_select) == LOW) {
+    if (curr_status == SCANNER_MODE) {
+        curr_screen = (curr_screen + 1) % 7;
+    }
+    else if (curr_status == RECEIVER_MODE) {
+      curr_channel = (curr_channel / 8) * 8 + (curr_channel + 1) % 8;
+      changing_freq = 1;
+    }
   }
 
   rx5808.abortScan();
@@ -79,7 +85,7 @@ void irq_mode_handle() {
   if (millis() - last_irq < 500) //debounce
     return;
 
-  if (digitalRead(button_mode) == LOW) {
+  if (digitalRead(button_mode) == HIGH && millis() - last_irq > 800) {
     rx5808.abortScan();
     changing_mode = 1;
     if (curr_status == RECEIVER_MODE) {
@@ -89,6 +95,18 @@ void irq_mode_handle() {
       curr_channel = rx5808.getMaxPos(); //next channel is the strongest
     }
   }
+  else if (digitalRead(button_mode) == LOW) {
+    if (curr_status == SCANNER_MODE) {
+        curr_screen = curr_screen==0 ? 6 : (curr_screen - 1) % 7;
+        rx5808.abortScan();
+    }
+    else if (curr_status == RECEIVER_MODE) {
+        curr_channel = (curr_channel + 8 - curr_channel % 8) % CHANNEL_MAX;
+        changing_freq = 1; ///////
+        rx5808.abortScan(); //////
+    }
+  }
+
   last_irq = millis();
 }
 
